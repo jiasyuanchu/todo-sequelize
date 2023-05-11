@@ -2,6 +2,8 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const methodOverride = require('method-override')
 const session = require('express-session')
+const usePassport = require('./config/passport') //載入一包 Passport 設定檔
+const passport = require('passport') //把 Passport 套件本身載入
 const bcrypt = require('bcryptjs')
 const app = express()
 const PORT = 3000
@@ -12,6 +14,21 @@ const User = db.User
 
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
+
+usePassport(app) //把 app 傳給 Passport
+
+app.use(session({
+  secret: 'ThisIsMySecret',
+  resave: false,
+  saveUninitialized: true
+}))
+
+// 加入 middleware，驗證 reqest 登入狀態
+app.post('/users/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/users/login'
+}))
+
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 
