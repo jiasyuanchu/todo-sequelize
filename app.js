@@ -9,7 +9,7 @@ const passport = require('passport') //把 Passport 套件本身載入
 const routes = require('./routes')// 引用路由器
 
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT
 
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
@@ -17,6 +17,11 @@ app.set('view engine', 'hbs')
 usePassport(app) //把 app 傳給 Passport
 
 app.use(flash())
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
   res.locals.user = req.user
@@ -26,7 +31,7 @@ app.use((req, res, next) => {
 })
 
 app.use(session({
-  secret: 'ThisIsMySecret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))
