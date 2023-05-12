@@ -1,12 +1,17 @@
 const express = require('express')
+const session = require('express-session')
 const exphbs = require('express-handlebars')
+const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const flash = require('connect-flash')
-const session = require('express-session')
-const usePassport = require('./config/passport') //載入一包 Passport 設定檔
-const passport = require('passport') //把 Passport 套件本身載入
 
-const routes = require('./routes')// 引用路由器
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
+const routes = require('./routes')
+
+const usePassport = require('./config/passport')
 
 const app = express()
 const PORT = process.env.PORT
@@ -14,14 +19,18 @@ const PORT = process.env.PORT
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 
-usePassport(app) //把 app 傳給 Passport
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true
+}))
+
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
+
+usePassport(app)
 
 app.use(flash())
-
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
-
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
   res.locals.user = req.user
@@ -30,16 +39,7 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true
-}))
-
-app.use(express.urlencoded({ extended: true }))
-app.use(methodOverride('_method'))
-
-app.use(routes)// 將 request 導入路由器
+app.use(routes)
 
 app.listen(PORT, () => {
   console.log(`App is running on http://localhost:${PORT}`)
