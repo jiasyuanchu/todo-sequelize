@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
     raw: true,
     nest: true
   })
-    .then((todos) => { return res.render('index', { todos: todos }) })
+    .then((todos) => { return res.render('index', { todos }) })
     .catch((error) => { return res.status(422).json(error) })
 })
 
