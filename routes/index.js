@@ -9,10 +9,12 @@ const users = require('./modules/users')
 
 // const { authenticator } = require('../middleware/auth')  // 掛載 middleware
 
-router.use('/todos', todos) 
+const { authenticator } = require('../middleware/auth')
+
+router.use('/todos', authenticator, todos)
 router.use('/users', users)
 // router.use('/auth', auth)  // 掛載模組
-router.use('/', home) 
+router.use('/', authenticator, home) 
 
 // 匯出路由器
 module.exports = router
