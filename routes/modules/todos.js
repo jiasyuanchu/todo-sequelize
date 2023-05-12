@@ -28,8 +28,7 @@ router.get('/:id/edit', (req, res) => {
 })
 
 
-//post? put?
-router.post('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
   const UserId = req.user.id
   const id = req.params.id
   const { name, isDone } = req.body
