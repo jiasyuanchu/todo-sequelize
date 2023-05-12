@@ -4,10 +4,6 @@ const methodOverride = require('method-override')
 const session = require('express-session')
 const usePassport = require('./config/passport') //載入一包 Passport 設定檔
 const passport = require('passport') //把 Passport 套件本身載入
-const bcrypt = require('bcryptjs')
-const db = require('./models')
-const Todo = db.Todo
-const User = db.User
 
 const routes = require('./routes')// 引用路由器
 
