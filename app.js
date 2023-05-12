@@ -15,6 +15,13 @@ app.set('view engine', 'hbs')
 
 usePassport(app) //把 app 傳給 Passport
 
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated()
+  res.locals.user = req.user
+  next()
+})
+
 app.use(session({
   secret: 'ThisIsMySecret',
   resave: false,
